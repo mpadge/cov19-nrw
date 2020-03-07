@@ -45,22 +45,22 @@ daily, at least until things are clearly under control (last update `r
 today()`). The raw data as presented in wikipedia are presented here:
 
 ```{r raw-data}
-x <- rbind (c ("Baden-Württemberg", 0, 1, 3, 6, 10, 14, 15, 19, 26, 44, 65, 96),
-            c ("Bavaria", 14, 14, 14, 14, 15, 15, 19, 25, 35, 48, 52, 117),
-            c ("Berlin", 0, 0, 0, 0, 0, 0, 0, 1, 3, 6, 9, 19),
-            c ("Brandenburg", 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2),
-            c ("Bremen", 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 3, 4),
+x <- rbind (c ("Baden-Württemberg", 0, 1, 3, 6, 10, 14, 15, 19, 26, 44, 65, 91, 170),
+            c ("Bavaria", 14, 14, 14, 14, 15, 15, 19, 25, 35, 48, 52, 79, 134),
+            c ("Berlin", 0, 0, 0, 0, 0, 0, 0, 1, 3, 6, 9, 15, 28),
+            c ("Brandenburg", 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2),
+            c ("Bremen", 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 3, 4, 4),
             c ("Hamburg", 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 8, 11),
-            c ("Hessen", 0, 0, 0, 0, 0, 3, 8, 10, 10, 12, 14, 16),
-            c ("Mecklenburg-Vorpommern", 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 5),
-            c ("Lower Saxony", 0, 0, 0, 0, 0, 0, 1, 1, 1, 4, 10, 18),
-            c ("North Rhine-Westphalia", 0, 1, 2, 4, 25, 30, 66, 86, 101, 111, 175, 329),
-            c ("Rhineland-Palatinate", 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 7, 10),
-            c ("Saarland", 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2),
-            c ("Saxony", 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2),
-            c ("Saxony-Anhalt", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-            c ("Schleswig-Holstein", 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 3, 7),
-            c ("Thuringia", 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1 ))
+            c ("Hessen", 0, 0, 0, 0, 0, 3, 8, 10, 10, 12, 14, 15, 17),
+            c ("Mecklenburg-Vorpommern", 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 5, 5),
+            c ("Lower Saxony", 0, 0, 0, 0, 0, 0, 1, 1, 1, 4, 10, 18, 19),
+            c ("North Rhine-Westphalia", 0, 1, 2, 4, 25, 30, 66, 86, 101, 111, 175, 281, 373),
+            c ("Rhineland-Palatinate", 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 7, 8, 13),
+            c ("Saarland", 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 3),
+            c ("Saxony", 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 4),
+            c ("Saxony-Anhalt", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+            c ("Schleswig-Holstein", 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 3, 7, 8),
+            c ("Thuringia", 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2))
 state <- x [, 1]
 x <- data.frame (apply (x [, 2:ncol (x)], 2, function (i) as.integer (i)))
 ndays <- ncol (x)

@@ -1,5 +1,5 @@
 ---
-title: "COV19 in Nord Rhein-Westfalia"
+title: "COV19 in North Rhein-Westphalia"
 output:
   rmarkdown::html_document
 ---
@@ -45,19 +45,19 @@ daily, at least until things are clearly under control (last update `r
 today()`). The raw data as presented in wikipedia are presented here:
 
 ```{r raw-data}
-x <- rbind (c ("Baden-Württemberg", 0, 1, 3, 6, 10, 14, 15, 19, 26, 44, 65, 91),
-            c ("Bavaria", 14, 14, 14, 14, 15, 15, 19, 25, 35, 48, 52, 79),
-            c ("Berlin", 0, 0, 0, 0, 0, 0, 0, 1, 3, 6, 9, 15),
-            c ("Brandenburg", 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1),
-            c ("Bremen", 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 3, 3),
-            c ("Hamburg", 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 8, 8),
-            c ("Hessen", 0, 0, 0, 0, 0, 3, 8, 10, 10, 12, 14, 15),
+x <- rbind (c ("Baden-Württemberg", 0, 1, 3, 6, 10, 14, 15, 19, 26, 44, 65, 96),
+            c ("Bavaria", 14, 14, 14, 14, 15, 15, 19, 25, 35, 48, 52, 117),
+            c ("Berlin", 0, 0, 0, 0, 0, 0, 0, 1, 3, 6, 9, 19),
+            c ("Brandenburg", 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2),
+            c ("Bremen", 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 3, 4),
+            c ("Hamburg", 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 8, 11),
+            c ("Hessen", 0, 0, 0, 0, 0, 3, 8, 10, 10, 12, 14, 16),
             c ("Mecklenburg-Vorpommern", 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 5),
             c ("Lower Saxony", 0, 0, 0, 0, 0, 0, 1, 1, 1, 4, 10, 18),
-            c ("North Rhine-Westphalia", 0, 1, 2, 4, 25, 30, 66, 86, 101, 111, 175, 281),
-            c ("Rhineland-Palatinate", 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 7, 8),
-            c ("Saarland", 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1),
-            c ("Saxony", 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1),
+            c ("North Rhine-Westphalia", 0, 1, 2, 4, 25, 30, 66, 86, 101, 111, 175, 329),
+            c ("Rhineland-Palatinate", 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 7, 10),
+            c ("Saarland", 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2),
+            c ("Saxony", 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2),
             c ("Saxony-Anhalt", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
             c ("Schleswig-Holstein", 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 3, 7),
             c ("Thuringia", 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1 ))
@@ -94,18 +94,10 @@ SIR <- function(time, state, parameters) {
 }
 
 # put the daily cumulative incidence numbers into a vector called Infected
+state <- "North Rhine-Westphalia"
 sir_start_date <- min (xl$date)
 sir_latest_date <- max (xl$date)
-x0 <- as.matrix (x [, 2:ncol (x)])
-cumulative_incidence <- data.frame (state = x$state,
-                                    t (apply (x0, 1, cumsum)))
-names (cumulative_incidence) [2:ncol (cumulative_incidence)] <-
-    names (x [2:ncol (x)])
-
-state <- "North Rhine-Westphalia"
-Infected <- cumulative_incidence [cumulative_incidence$state == state,
-                                  2:ncol (cumulative_incidence)] %>%
-                                      as.integer ()
+Infected <- as.integer (x [x$state == state, 2:ncol (x)])
 index <- min (which (Infected > 0)):length (Infected)
 dates <- sir_start_date + days ((1:ndays - 1) [index])
 Infected <- Infected [index]

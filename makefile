@@ -8,8 +8,8 @@ knith: $(LFILE).Rmd
 move: $(LFILE).html
 	mv $(LFILE).html docs/index.html
 
-open: $(LFILE).html
-	xdg-open $(LFILE).html &
+open:
+	xdg-open docs/index.html &
 
 clean:
 	rm -rf *.html *.png

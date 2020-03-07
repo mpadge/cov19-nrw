@@ -187,10 +187,13 @@ ggplot (sir, aes (x = date, y = value, colour = type)) +
     labs (y = "Person", title = main)
 ```
 
-The population of infected individuals does not in this case appear to follow
-the currently observed trajectory, in particularly through ultimately reaching
-a considerably higher peak value than what seems likely given those observed
-data.
+That model predicts a peak date of 
+```{r}
+dmax <- fitted_cumulative_incidence$date [which.max (fitted_cumulative_incidence$I)]
+dmax
+```
+so we've still got `r as.integer (dmax - today ())` days to get through.
+
 
 
 ## Reproduction Number

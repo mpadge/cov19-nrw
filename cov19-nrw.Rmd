@@ -1,7 +1,8 @@
 ---
 title: "COV19 in North Rhein-Westphalia"
 output:
-  rmarkdown::html_document
+  rmarkdown::html_document:
+      code_folding: hide
 ---
 
 ```{r opts, echo = FALSE}
@@ -41,8 +42,8 @@ library (EpiEstim)
 The raw data in this case are from the wikipedia site for
 [2020_coronavirus_outbreak_in_Germany](https://en.wikipedia.org/wiki/2020_coronavirus_outbreak_in_Germany),
 which contains the most up-to-date information. This site will be updated
-daily, at least until things are clearly under control (last update `r
-today()`). The raw data as presented in wikipedia are presented here:
+daily, at least until things are clearly under control (last update 
+`r today()`). The raw data as presented in wikipedia are presented here:
 
 ```{r raw-data}
 x <- rbind (c ("Baden-Württemberg", 0, 1, 3, 6, 10, 14, 15, 19, 26, 44, 65, 91, 170),
@@ -154,15 +155,10 @@ R0 <- Opt_par [names (Opt_par) == "beta"] / Opt_par [names (Opt_par) == "gamma"]
 message ("Basic reproductive rate = ", formatC (R0, format = "f", digits = 2))
 ```
 
-That initial estimate is *extremely* high (compared, for example, with Tim's
-estimate of around 2.0 for the initial cases from Hubei Province, China, the
-origin of the current outbreak. The fitted model also does not appear to fit
-the observed data particularly well in this case, so that estimate ought not at
-the current point be taken as accurate. We also currently only have 11 days of
-data for North Rhein-Westphalia, compared with 22 days used by Tim for his
-analysis of Hubei Province. The summary message at present is that these
-analyses appear to be currently quite inaccurate, but will hopefully increase
-in accuracy in the coming days as more data become available.
+The preceding code gives an estimate for the reproductive rate of 
+`r formatC (R0, format = "f", digits = 2)`, which is *extremely* high
+(compared, for example, with Tim's estimate of around 2.0 for the initial cases
+from Hubei Province, China, the origin of the current outbreak. 
 
 ## prediction
 
@@ -187,12 +183,12 @@ ggplot (sir, aes (x = date, y = value, colour = type)) +
     labs (y = "Person", title = main)
 ```
 
-That model predicts a peak date of 
 ```{r}
 dmax <- fitted_cumulative_incidence$date [which.max (fitted_cumulative_incidence$I)]
 dmax
 ```
-so we've still got `r as.integer (dmax - today ())` days to get through.
+That model predicts a peak date of `r dmax`, so we've still got 
+`r as.integer (dmax - today ())` days to get through.
 
 
 
@@ -260,7 +256,10 @@ might actually likely be.
 ### changes in R
 
 Tim then proceeds to model likely changes in reproductive rate through time
-using the following code.
+using the following code, using the second model which effectively presumes
+reproductive rates themselves may vary on a case-to-case basis, and so are
+drawn from an underlying generative distribution, parameterised in the
+following code.
 
 ```{r changes-in-R}
 # custom results plotting function to avoid the ugly
@@ -274,19 +273,6 @@ plot_Ri <- function(estimate_R_obj) {
 }
 
 confirmed_cases <- Infected
-res_parametric_si <- estimate_R(confirmed_cases, method = "parametric_si",
-                                config = make_config(list(mean_si = 7.5, 
-                                                          std_si = 3.4)))
-
-plot_Ri(res_parametric_si)
-```
-
-And at least that shows a very pronounced decrease in `R`, which is
-encouraging. He then fits a more sophisticated model, effectively presuming
-reproductive rates themselves may vary on a case-to-case basis, and so are
-drawn from an underlying generative distribution, parameterised as follows:
-
-```{r changes-in-R2}
 config <- make_config(list(mean_si = 7.5, std_mean_si = 2,
                       min_mean_si = 1, max_mean_si = 8.4,
                       std_si = 3.4, std_std_si = 1,
@@ -300,8 +286,10 @@ Those values are results ought not be taken as accurate at present, and
 importantly use Tim's estimates for mean and standard deviation of the serial
 interval (SI), which is the time between the onset of symptoms in any one case,
 and the onset of symptoms in secondary cases caused by that first infection.
+They nevertheless reveal that the rate of viral reproduction has already
+manifest a dramatic decrease.
 
-When more NRW data become available, can then continue the analysis from
+When more NRW data become available, we can then continue the analysis from
 https://timchurches.github.io/blog/posts/2020-02-18-analysing-covid-19-2019-ncov-outbreak-data-with-r-part-1/#estimating-changes-in-the-effective-reproduction-number
 
 

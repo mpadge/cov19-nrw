@@ -41,9 +41,14 @@ library (EpiEstim)
 
 The raw data in this case are from the wikipedia site for
 [2020_coronavirus_outbreak_in_Germany](https://en.wikipedia.org/wiki/2020_coronavirus_outbreak_in_Germany),
-which contains the most up-to-date information. This site will be updated
-daily, at least until things are clearly under control (last update 
-`r today()`). The raw data as presented in wikipedia are presented here:
+which contains the most up-to-date information, archived daily from the
+"official" figures from the Robert Koch Institute (RKI). Note that RKI did not
+update counts for NRW for the 11th or 12th of March, and that intermediate,
+alternative figures exceeded the figure eventually given on the 13th of March.
+The drop on that date is thus a statistical artefact, not a real drop in cases.
+This site will be updated daily, at least until things are clearly under
+control (last update `r today()`). The raw data as presented in wikipedia are
+presented here:
 
 ```{r raw-data}
 x <- rbind (c ("Baden-Württemberg", 0, 1, 3, 6, 10, 14, 15, 19, 26, 44, 65, 91, 116, 182, 199, 237, 277, NA),
@@ -55,7 +60,7 @@ x <- rbind (c ("Baden-Württemberg", 0, 1, 3, 6, 10, 14, 15, 19, 26, 44, 65, 91,
             c ("Hessen", 0, 0, 0, 0, 0, 3, 8, 10, 10, 12, 14, 15, 16, 17, 20, 35, 48, NA),
             c ("Mecklenburg-Vorpommern", 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 5, 5, 7, 8, 13, 17, NA),
             c ("Lower Saxony", 0, 0, 0, 0, 0, 0, 1, 1, 1, 4, 10, 18, 19, 21, 33, 49, 75, NA),
-            c ("North Rhine-Westphalia", 0, 1, 2, 4, 25, 30, 66, 86, 101, 111, 175, 281, 346, 392, 484, 648, 801, 1041),
+            c ("North Rhine-Westphalia", 0, 1, 2, 4, 25, 30, 66, 86, 101, 111, 175, 281, 346, 392, 484, 648, 801, 688),
             c ("Rhineland-Palatinate", 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 7, 8, 10, 15, 19, 25, 25, NA),
             c ("Saarland", 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 4, 5, 7, 14, NA),
             c ("Saxony", 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 4, 10, 22, 26, NA),
@@ -217,27 +222,21 @@ incidence_peak <- find_peak (incidence_obj)
 # Then restore the counts to their original scale
 incidence_obj$counts <- incidence_obj$counts * 10
 
-plot (incidence_obj) +
+data.frame (date = incidence_obj$dates,
+            count = incidence_obj$counts / 1e6) %>%
+    ggplot (aes (x = date, y = count)) +
+    geom_line () +
     geom_vline(xintercept = incidence_peak, col = "red", lty = 2) +
     labs(title = paste0 ("Daily incidence of lab-confirmed cases, ", this_state),
-         subtitle = "(red line indicates date of peak incidence)")
-```
-
-The next step is to fit a model to the two phases of the epidemic's dynamic:
-growth and decay.
-```{r incidence-fit}
-incidence_fit <- incidence::fit(incidence_obj, split = incidence_peak)
-
-plot(incidence_obj) %>%
-    add_incidence_fit(incidence_fit) + 
-    labs(title = "Observed and modelled incidence of COVID-19 cases", 
-         subtitle = this_state)
+         subtitle = "(red line indicates date of peak incidence)") +
+    ylab ("cases (millions)")
 ```
 
 Distributions for reproductive rates can then be fitted using the
 `incidence_fit` model:
 
 ```{r distcrete}
+incidence_fit <- incidence::fit(incidence_obj, split = incidence_peak)
 mu <- 7.5  # days
 sigma <- 3.4  # days
 param <- gamma_mucv2shapescale(mu, sigma/mu)
@@ -252,9 +251,6 @@ decay_R0 <- lm2R0_sample(incidence_fit$after$model, w)
 hist(decay_R0, col = "grey", border = "white", main = "Distribution of R0")
 ```
 
-The former is way too high, because of the apparent initial over-estimate of
-R0, and the latter also consequently represents a rate of decay higher than it
-might actually likely be.
 
 ### changes in R
 

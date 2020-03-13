@@ -194,10 +194,10 @@ ggplot (sir, aes (x = date, y = value, colour = type)) +
 ```{r}
 dmax <- fitted_cumulative_incidence$date [which.max (fitted_cumulative_incidence$I)]
 dmax
+popexp <- (N - min (fitted_cumulative_incidence$S)) / N
 ```
-That model predicts a peak date of `r dmax`, so we've still got 
-`r as.integer (dmax - today ())` days to get through.
-
+That model predicts a peak date of `r dmax`, and a resultant exposure of 
+`r round (100 * popexp)`% of the population.
 
 
 ## Reproduction Number
@@ -233,7 +233,8 @@ data.frame (date = incidence_obj$dates,
 ```
 
 Distributions for reproductive rates can then be fitted using the
-`incidence_fit` model:
+`incidence_fit` model, first for the growth phase up to the peak date shown
+above of `r dmax`:
 
 ```{r distcrete}
 incidence_fit <- incidence::fit(incidence_obj, split = incidence_peak)
@@ -246,7 +247,11 @@ w <- distcrete("gamma", interval = 1,
 
 growth_R0 <- lm2R0_sample(incidence_fit$before$model, w)
 hist(growth_R0, col = "grey", border = "white", main = "Distribution of R0")
+```
 
+And then for the decay following the peak:
+
+```{r distcrete2}
 decay_R0 <- lm2R0_sample(incidence_fit$after$model, w)
 hist(decay_R0, col = "grey", border = "white", main = "Distribution of R0")
 ```
@@ -288,8 +293,6 @@ and the onset of symptoms in secondary cases caused by that first infection.
 They nevertheless reveal that the rate of viral reproduction has already
 manifest a dramatic decrease.
 
-When more NRW data become available, we can then continue the analysis from
-https://timchurches.github.io/blog/posts/2020-02-18-analysing-covid-19-2019-ncov-outbreak-data-with-r-part-1/#estimating-changes-in-the-effective-reproduction-number
-
+## Scenarios
 
 

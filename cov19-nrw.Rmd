@@ -217,7 +217,7 @@ confirmed_cases <- Infected
 config <- make_config(list(mean_si = 7.5, std_mean_si = 2,
                       min_mean_si = 1, max_mean_si = 8.4,
                       std_si = 3.4, std_std_si = 1,
-                      min_std_si = 0.5, max_std_si = 4, n1 = 1000, n2 = 1000))
+                      min_std_si = 0.5, max_std_si = 4))
 res_parametric_si <- estimate_R(confirmed_cases, method = "parametric_si",
                                 config = config)
 res_parametric_si$dates <- dates
@@ -230,4 +230,30 @@ interval (SI), which is the time between the onset of symptoms in any one case,
 and the onset of symptoms in secondary cases caused by that first infection.
 They nevertheless reveal that the rate of viral reproduction has already
 manifest a dramatic decrease.
+
+The same procedure can be applied to all states of Germany, to estimate current
+instantaneous reproductive rates. The following code does that, sorting the
+results by increasing reproductive rate.
+
+```{r chnages-in-R2}
+window_span <- 2
+tstart <- 2:(ncol (x) - window_span - 1) # -1 for 1st column of states
+tend <- tstart + window_span
+config <- make_config(list(mean_si = 7.5, std_mean_si = 2,
+                      min_mean_si = 1, max_mean_si = 8.4,
+                      std_si = 3.4, std_std_si = 1,
+                      min_std_si = 0.5, max_std_si = 4,
+                      t_start = tstart, t_end = tend))
+rvals <- apply (x [, 2:ncol (x)], 1, function (i) {
+                    res <- estimate_R(i, method = "parametric_si",
+                                      config = config)
+                    as.numeric (tail (res$R["Mean(R)"], 1))
+                                })
+data.frame (state = x$state,
+            R = rvals,
+            stringsAsFactors = FALSE) %>%
+    arrange (R) %>%
+    knitr::kable (digits = c (NA, 2))
+```
+
 

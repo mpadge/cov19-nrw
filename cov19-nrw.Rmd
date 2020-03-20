@@ -208,13 +208,13 @@ That model predicts a peak date of `r dmax`, and a resultant exposure of
 ## Reproduction Number
 
 The following code estimates changes in reproductive rate through time,
-presumingreproductive rates themselves may vary on a case-to-case basis, and so
-are drawn from an underlying generative distribution, parameterised in the
+presuming reproductive rates themselves may vary on a case-to-case basis, and
+so are drawn from an underlying generative distribution, parameterised in the
 following code.
 
 ```{r changes-in-R}
 confirmed_cases <- Infected
-config <- make_config(list(mean_si = 7.5, std_mean_si = 2,
+config <- make_config(list(mean_si = 6.5, std_mean_si = 2,
                       min_mean_si = 1, max_mean_si = 8.4,
                       std_si = 3.4, std_std_si = 1,
                       min_std_si = 0.5, max_std_si = 4))
@@ -226,21 +226,25 @@ plot(res_parametric_si, "R") +
 ```
 
 Those values are results ought not be taken as accurate at present, and
-importantly use Tim's estimates for mean and standard deviation of the serial
+importantly use fixed estimates for mean and standard deviation of the serial
 interval (SI), which is the time between the onset of symptoms in any one case,
 and the onset of symptoms in secondary cases caused by that first infection.
-They nevertheless reveal that the rate of viral reproduction has already
-manifest a dramatic decrease.
+Mean values of SI are assumed to be 6.5 days, as assumed in the latest report
+from [Imperial College
+London](https://www.imperial.ac.uk/mrc-global-infectious-disease-analysis/news--wuhan-coronavirus/),
+and less than Tim's initial estimate of 7.5 days. These results reveal that the
+rate of viral reproduction has already manifest a dramatic decrease.
 
 The same procedure can be applied to all states of Germany, to estimate current
-instantaneous reproductive rates. The following code does that, sorting the
-results by increasing reproductive rate.
+instantaneous reproductive rates. Note that final values are highly sensitive
+to the estimated value of SI = 6.5 days. The following calculates these values
+and sorts the results by increasing reproductive rate.
 
 ```{r chnages-in-R2}
 window_span <- 2
 tstart <- 2:(ncol (x) - window_span - 1) # -1 for 1st column of states
 tend <- tstart + window_span
-config <- make_config(list(mean_si = 7.5, std_mean_si = 2,
+config <- make_config(list(mean_si = 6.5, std_mean_si = 2,
                       min_mean_si = 1, max_mean_si = 8.4,
                       std_si = 3.4, std_std_si = 1,
                       min_std_si = 0.5, max_std_si = 4,

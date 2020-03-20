@@ -56,22 +56,22 @@ was lower that the state's official figure for the 12th. The value for the 12th
 
 ```{r raw-data}
 # official NRW figures go 648, 801, 688, 936 - manually adjusted to 648, 801, 80, 936
-x <- rbind (c ("Baden-Württemberg", 0, 1, 3, 6, 10, 14, 15, 19, 26, 44, 65, 91, 116, 182, 199, 237, 277, 454, 454, 569, 827, 1105, 1479, 1609, 2155),
-            c ("Bavaria", 14, 14, 14, 14, 15, 15, 19, 25, 35, 48, 52, 79, 117, 148, 256, 314, 366, 500, 588, 681, 886, 1067, 1109, 1243, 1592),
-            c ("Berlin", 0, 0, 0, 0, 0, 0, 0, 1, 3, 6, 9, 15, 24, 28, 40, 48, 90, 137, 174, 216, 283, 300, 345, 391, 573),
-            c ("Brandenburg", 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 6, 9, 24, 30, 44, 61, 84, 94, 73, 92, 134),
-            c ("Bremen", 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 3, 4, 4, 4, 4, 4, 21, 38, 42, 50, 53, 56, 57, 69, 80),
-            c ("Hamburg", 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 8, 8, 12, 13, 17, 29, 48, 88, 99, 158, 162, 260, 310, 358, 432),
-            c ("Hessen", 0, 0, 0, 0, 0, 3, 8, 10, 10, 12, 14, 15, 16, 17, 20, 35, 48, 99, 148, 203, 286, 342, 373, 432, 682),
-            c ("Mecklenburg-Vorpommern", 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 5, 5, 7, 8, 13, 17, 23, 33, 45, 50, 51, 45, 56, 98),
-            c ("Lower Saxony", 0, 0, 0, 0, 0, 0, 1, 1, 1, 4, 10, 18, 19, 21, 33, 49, 75, 129, 230, 253, 287, 391, 325, 478, 699),
-            c ("North Rhine-Westphalia", 0, 1, 2, 4, 25, 30, 66, 86, 101, 111, 175, 281, 346, 392, 484, 648, 801, 801, 936, 1154, 1407, 1541, 2105, 2372, 3033),
-            c ("Rhineland-Palatinate", 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 7, 8, 10, 15, 19, 25, 25, 52, 102, 121, 168, 325, 442, 474, 637),
-            c ("Saarland", 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 4, 5, 7, 14, 14, 40, 40, 32, 85, 75, 88, 99),
-            c ("Saxony", 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 4, 10, 22, 26, 45, 83, 93, 130, 140, 182, 198, 275),
-            c ("Saxony-Anhalt", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 15, 27, 42, 45, 47, 77, 55, 105, 140),
-            c ("Schleswig-Holstein", 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 3, 7, 8, 8, 9, 9, 27, 31, 48, 60, 103, 123, 127, 159, 202),
-            c ("Thuringia", 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 4, 10, 14, 29, 4, 51, 55, 51, 74, 98))
+x <- rbind (c ("Baden-Württemberg", 0, 1, 3, 6, 10, 14, 15, 19, 26, 44, 65, 91, 116, 182, 199, 237, 277, 454, 454, 569, 827, 1105, 1479, 1609, 2155, 2746),
+            c ("Bavaria", 14, 14, 14, 14, 15, 15, 19, 25, 35, 48, 52, 79, 117, 148, 256, 314, 366, 500, 588, 681, 886, 1067, 1109, 1243, 1592, 2401),
+            c ("Berlin", 0, 0, 0, 0, 0, 0, 0, 1, 3, 6, 9, 15, 24, 28, 40, 48, 90, 137, 174, 216, 283, 300, 345, 391, 573, 731),
+            c ("Brandenburg", 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2, 6, 9, 24, 30, 44, 61, 84, 94, 73, 92, 134, 192),
+            c ("Bremen", 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 3, 4, 4, 4, 4, 4, 21, 38, 42, 50, 53, 56, 57, 69, 80, 121),
+            c ("Hamburg", 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 8, 8, 12, 13, 17, 29, 48, 88, 99, 158, 162, 260, 310, 358, 432, 586),
+            c ("Hessen", 0, 0, 0, 0, 0, 3, 8, 10, 10, 12, 14, 15, 16, 17, 20, 35, 48, 99, 148, 203, 286, 342, 373, 432, 682, 813),
+            c ("Mecklenburg-Vorpommern", 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 4, 5, 5, 7, 8, 13, 17, 23, 33, 45, 50, 51, 45, 56, 98, 131),
+            c ("Lower Saxony", 0, 0, 0, 0, 0, 0, 1, 1, 1, 4, 10, 18, 19, 21, 33, 49, 75, 129, 230, 253, 287, 391, 325, 478, 699, 803),
+            c ("North Rhine-Westphalia", 0, 1, 2, 4, 25, 30, 66, 86, 101, 111, 175, 281, 346, 392, 484, 648, 801, 801, 936, 1154, 1407, 1541, 2105, 2372, 3033, 3497),
+            c ("Rhineland-Palatinate", 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 7, 8, 10, 15, 19, 25, 25, 52, 102, 121, 168, 325, 442, 474, 637, 801),
+            c ("Saarland", 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 4, 5, 7, 14, 14, 40, 40, 32, 85, 75, 88, 99, 146),
+            c ("Saxony", 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 4, 10, 22, 26, 45, 83, 93, 130, 140, 182, 198, 275, 394),
+            c ("Saxony-Anhalt", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 15, 27, 42, 45, 47, 77, 55, 105, 140, 180),
+            c ("Schleswig-Holstein", 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 3, 7, 8, 8, 9, 9, 27, 31, 48, 60, 103, 123, 127, 159, 202, 266),
+            c ("Thuringia", 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 2, 2, 4, 10, 14, 29, 4, 51, 55, 51, 74, 98, 149))
 state <- x [, 1]
 x <- data.frame (apply (x [, 2:ncol (x)], 2, function (i) as.integer (i)))
 ndays <- ncol (x)
@@ -207,80 +207,12 @@ That model predicts a peak date of `r dmax`, and a resultant exposure of
 
 ## Reproduction Number
 
-Calculating the reproductive rate requires first converting the incidence data
-into a simple vector of dates (via the `tidyr::uncount()` function), in which
-each entry represents a single case. The very large population of North
-Rhein-Westphalia (`r format (N, big.mark = ",")`) translates to a vector too
-long to be constructed here, so the incidence rates are first divided by 10,
-before being subsequently re-scaled. Note throughout this that the preceding
-estimate of reproductive rate seems erroneous given the current data from North
-Rhein-Westphalia, and so the following analysis should also be considered for
-the moment to be inaccurate.
-
-```{r incidence}
-x <- fitted_cumulative_incidence %>%
-    select (date, I) %>%
-    transform (I = round (I / 10)) %>%
-    uncount (I)
-incidence_obj <- incidence (x$date)
-incidence_peak <- find_peak (incidence_obj)
-# Then restore the counts to their original scale
-incidence_obj$counts <- incidence_obj$counts * 10
-
-data.frame (date = incidence_obj$dates,
-            count = incidence_obj$counts / 1e6) %>%
-    ggplot (aes (x = date, y = count)) +
-    geom_line () +
-    geom_vline(xintercept = incidence_peak, col = "red", lty = 2) +
-    labs(title = paste0 ("Daily incidence of lab-confirmed cases, ", this_state),
-         subtitle = "(red line indicates date of peak incidence)") +
-    ylab ("cases (millions)")
-```
-
-Distributions for reproductive rates can then be fitted using the
-`incidence_fit` model, first for the growth phase up to the peak date shown
-above of `r dmax`:
-
-```{r distcrete}
-incidence_fit <- incidence::fit(incidence_obj, split = incidence_peak)
-mu <- 7.5  # days
-sigma <- 3.4  # days
-param <- gamma_mucv2shapescale(mu, sigma/mu)
-
-w <- distcrete("gamma", interval = 1,
-               shape = param$shape, scale = param$scale, w = 0)
-
-growth_R0 <- lm2R0_sample(incidence_fit$before$model, w)
-hist(growth_R0, col = "grey", border = "white", main = "Distribution of R0")
-```
-
-And then for the decay following the peak:
-
-```{r distcrete2}
-decay_R0 <- lm2R0_sample(incidence_fit$after$model, w)
-hist(decay_R0, col = "grey", border = "white", main = "Distribution of R0")
-```
-
-
-### changes in R
-
-Tim then proceeds to model likely changes in reproductive rate through time
-using the following code, using the second model which effectively presumes
-reproductive rates themselves may vary on a case-to-case basis, and so are
-drawn from an underlying generative distribution, parameterised in the
+The following code estimates changes in reproductive rate through time,
+presumingreproductive rates themselves may vary on a case-to-case basis, and so
+are drawn from an underlying generative distribution, parameterised in the
 following code.
 
 ```{r changes-in-R}
-# custom results plotting function to avoid the ugly
-# TableGrob messages returned by the plotting function in the
-# EpiEstim package
-plot_Ri <- function(estimate_R_obj) {
-    p_I <- plot(estimate_R_obj, "incid", add_imported_cases = TRUE)  # plots the incidence
-    p_SI <- plot(estimate_R_obj, "SI")  # plots the serial interval distribution
-    p_Ri <- plot(estimate_R_obj, "R")
-    return(gridExtra::grid.arrange(p_I, p_SI, p_Ri, ncol = 1))
-}
-
 confirmed_cases <- Infected
 config <- make_config(list(mean_si = 7.5, std_mean_si = 2,
                       min_mean_si = 1, max_mean_si = 8.4,
@@ -288,7 +220,8 @@ config <- make_config(list(mean_si = 7.5, std_mean_si = 2,
                       min_std_si = 0.5, max_std_si = 4, n1 = 1000, n2 = 1000))
 res_parametric_si <- estimate_R(confirmed_cases, method = "parametric_si",
                                 config = config)
-plot_Ri(res_parametric_si)
+res_parametric_si$dates <- dates
+plot(res_parametric_si, "R")
 ```
 
 Those values are results ought not be taken as accurate at present, and
@@ -297,7 +230,4 @@ interval (SI), which is the time between the onset of symptoms in any one case,
 and the onset of symptoms in secondary cases caused by that first infection.
 They nevertheless reveal that the rate of viral reproduction has already
 manifest a dramatic decrease.
-
-## Scenarios
-
 

@@ -221,7 +221,8 @@ config <- make_config(list(mean_si = 7.5, std_mean_si = 2,
 res_parametric_si <- estimate_R(confirmed_cases, method = "parametric_si",
                                 config = config)
 res_parametric_si$dates <- dates
-plot(res_parametric_si, "R")
+plot(res_parametric_si, "R") +
+    scale_y_log10 ()
 ```
 
 Those values are results ought not be taken as accurate at present, and

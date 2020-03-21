@@ -425,6 +425,7 @@ res_aus$country <- "Australia"
 # manual conversion to long
 res <- rbind (res_de, res_uk, res_india, res_aus)
 res <- res [which (apply (res [, 3:5], 1, function (i) !all (is.na (i)))), ]
+res <- res [which (res$date > ymd ("2020-02-20")), ]
 
 ggplot (res, aes (x = date, y = rmn, colour = country)) +
     geom_smooth (aes (ymin = q05, ymax = q95), method = "loess",

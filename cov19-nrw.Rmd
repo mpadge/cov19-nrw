@@ -371,7 +371,8 @@ res_aus$cases [index] <- rval_aus$I
 
 res <- rbind (cbind (res_de, "country" = "Germany"),
               cbind (res_uk, "country" = "UK"),
-              cbind (res_india, "country" = "India"))
+              cbind (res_india, "country" = "India"),
+              cbind (res_aus, "country" = "Australia"))
 res <- res [which (res$date > ymd ("2020-02-20")), ]
 ggplot (res, aes (x = date, y = cases, colour = country)) +
     geom_line () +

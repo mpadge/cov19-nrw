@@ -325,10 +325,33 @@ R0_uk <- as.numeric (tail (rval_uk$R["Mean(R)"], 1))
 
 Note that equivalent US values can not be compared because of inadequate statistics, as explained on the [wikipedia page](https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_in_the_United_States#Statistics).
 
+```{r all-case-counts}
+rval_de <- res_parametric_si
+dates <- sort (unique (c (rval_de$dates, rval_india$dates, rval_uk$dates)))
+res <- data.frame (date = dates,
+                   cases = NA)
+res_de <- res_uk <- res_india <- res
+index <- match (rval_de$dates, res$date)
+res_de$cases [index] <- rval_de$I
+index <- match (rval_uk$dates, res$date)
+res_uk$cases [index] <- rval_uk$I
+index <- match (rval_india$dates, res$date)
+res_india$cases [index] <- rval_india$I
+
+res <- rbind (cbind (res_de, "country" = "Germany"),
+              cbind (res_uk, "country" = "UK"),
+              cbind (res_india, "country" = "India"))
+ggplot (res, aes (x = date, y = cases, colour = country)) +
+    geom_line () +
+    geom_point ()
+```
+
+The UK and Germany are following very similar trajectories, while India lies
+far below. The instantaneous reproductive numbers are shown in the following
+graph.
 
 
 ```{r all-rates}
-rval_de <- res_parametric_si
 dates <- sort (unique (c (rval_de$dates, rval_india$dates, rval_uk$dates)))
 res <- data.frame (date = dates,
                    rmn = NA,
@@ -369,4 +392,7 @@ ggplot (res, aes (x = date, y = rmn, colour = country)) +
     ylab ("Instantaneous Reproductive Rate (R0)")
 ```
 
+And India start in the first week of March with a similar rate of reproduction,
+but has managed to decrease the rate much faster than either the UK or Germany.
+Germany currently has a lower rate of reproduction than the UK.
 

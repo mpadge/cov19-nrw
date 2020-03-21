@@ -322,28 +322,60 @@ rval_uk$dates <- dates
 R0_uk <- as.numeric (tail (rval_uk$R["Mean(R)"], 1))
 ```
 
+```{r aus-rate}
+# Australia
+u <- "https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_in_Australia"
+res <- read_html (u) %>%
+    html_table (fill = TRUE)
+i <- which (vapply (res, function (j) 
+                        colnames (j) [2] == "Confirmed" &
+                            colnames (j) [3] == "Recovered",
+                        logical (1)))
+res <- res [[i]]
+dates <- ymd (dmy (res [, 1]))
+res <- apply (res [, -1], 2, function (i) {
+                  str_replace_all (i, "\\(.*\\)|\\[.*\\]", "") %>%
+                      as.integer () })
+cases <- res [, which (colnames (res) == "Confirmed")]
+
+tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states
+tend <- tstart + window_span
+config <- make_config(list(mean_si = 6.5, std_mean_si = 2,
+                      min_mean_si = 1, max_mean_si = 8.4,
+                      std_si = 3.4, std_std_si = 1,
+                      min_std_si = 0.5, max_std_si = 4,
+                      t_start = tstart, t_end = tend))
+rval_aus <- estimate_R(cases, method = "parametric_si", config = config)
+rval_aus$dates <- dates
+R0_aus <- as.numeric (tail (rval_aus$R["Mean(R)"], 1))
+```
+
 
 Note that equivalent US values can not be compared because of inadequate statistics, as explained on the [wikipedia page](https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_in_the_United_States#Statistics).
 
 ```{r all-case-counts}
 rval_de <- res_parametric_si
-dates <- sort (unique (c (rval_de$dates, rval_india$dates, rval_uk$dates)))
+dates <- sort (unique (c (rval_de$dates, rval_india$dates, rval_uk$dates,
+                          rval_aus$dates)))
 res <- data.frame (date = dates,
                    cases = NA)
-res_de <- res_uk <- res_india <- res
+res_de <- res_uk <- res_india <- res_aus <- res
 index <- match (rval_de$dates, res$date)
 res_de$cases [index] <- rval_de$I
 index <- match (rval_uk$dates, res$date)
 res_uk$cases [index] <- rval_uk$I
 index <- match (rval_india$dates, res$date)
 res_india$cases [index] <- rval_india$I
+index <- match (rval_aus$dates, res$date)
+res_aus$cases [index] <- rval_aus$I
 
 res <- rbind (cbind (res_de, "country" = "Germany"),
               cbind (res_uk, "country" = "UK"),
               cbind (res_india, "country" = "India"))
+res <- res [which (res$date > ymd ("2020-02-20")), ]
 ggplot (res, aes (x = date, y = cases, colour = country)) +
     geom_line () +
-    geom_point ()
+    geom_point () 
 ```
 
 The UK and Germany are following very similar trajectories, while India lies
@@ -352,13 +384,14 @@ graph.
 
 
 ```{r all-rates}
-dates <- sort (unique (c (rval_de$dates, rval_india$dates, rval_uk$dates)))
+dates <- sort (unique (c (rval_de$dates, rval_india$dates, rval_uk$dates,
+                          rval_aus$dates)))
 res <- data.frame (date = dates,
                    rmn = NA,
                    rsd = NA,
                    q05 = NA,
                    q95 = NA)
-res_de <- res_uk <- res_india <- res
+res_de <- res_uk <- res_india <- res_aus <- res
 
 index <- match (rval_de$dates [rval_de$R[, "t_end"]], res$date)
 res_de$rmn [index] <- rval_de$R[, "Mean(R)"]
@@ -381,8 +414,15 @@ res_india$q05 [index] <- rval_india$R[, "Quantile.0.05(R)"]
 res_india$q95 [index] <- rval_india$R[, "Quantile.0.95(R)"]
 res_india$country <- "India"
 
+index <- match (rval_aus$dates [rval_aus$R[, "t_end"]], res$date)
+res_aus$rmn [index] <- rval_aus$R[, "Mean(R)"]
+res_aus$rsd [index] <- rval_aus$R[, "Std(R)"]
+res_aus$q05 [index] <- rval_aus$R[, "Quantile.0.05(R)"]
+res_aus$q95 [index] <- rval_aus$R[, "Quantile.0.95(R)"]
+res_aus$country <- "Australia"
+
 # manual conversion to long
-res <- rbind (res_de, res_uk, res_india)
+res <- rbind (res_de, res_uk, res_india, res_aus)
 res <- res [which (apply (res [, 3:5], 1, function (i) !all (is.na (i)))), ]
 
 ggplot (res, aes (x = date, y = rmn, colour = country)) +
@@ -394,5 +434,7 @@ ggplot (res, aes (x = date, y = rmn, colour = country)) +
 
 And India start in the first week of March with a similar rate of reproduction,
 but has managed to decrease the rate much faster than either the UK or Germany.
-Germany currently has a lower rate of reproduction than the UK.
+Germany currently has a lower rate of reproduction than the UK. Australia was
+doing really well, but is looking like it might be facing some serious problems
+soon.
 

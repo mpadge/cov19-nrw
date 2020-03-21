@@ -264,4 +264,109 @@ data.frame (state = x$state,
     knitr::kable (digits = c (NA, 2))
 ```
 
+# Comparison with reproduction numbers from other countries
+
+
+```{r india-rate}
+# INDIA
+u <- "https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_in_India"
+res <- read_html (u) %>%
+    html_table (fill = TRUE)
+i <- which (vapply (res, function (j) 
+                        colnames (j) [1] == "Date" &
+                            colnames (j) [2] == "State/Union Territory",
+                        logical (1)))
+res <- res [[i]]
+cases <- res [-1, which (names (res) == "Cases[a]") [2]]
+cases <- as.integer (cases [1:(which (cases == "") - 1)])
+dates <- res$Date [-1] [seq (length (cases))]
+index <- which (grepl ("^2020", dates))
+cases <- cases [index]
+dates <- ymd (dates [index])
+
+tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states
+tend <- tstart + window_span
+config <- make_config(list(mean_si = 6.5, std_mean_si = 2,
+                      min_mean_si = 1, max_mean_si = 8.4,
+                      std_si = 3.4, std_std_si = 1,
+                      min_std_si = 0.5, max_std_si = 4,
+                      t_start = tstart, t_end = tend))
+rval_india <- estimate_R(cases, method = "parametric_si", config = config)
+rval_india$dates <- dates
+R0_india <- as.numeric (tail (rval_india$R["Mean(R)"], 1))
+```
+
+```{r uk-rate}
+# UK
+u <- "https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_in_the_United_Kingdom"
+res <- read_html (u) %>%
+    html_table (fill = TRUE)
+i <- which (vapply (res, function (j) 
+                        colnames (j) [1] == "Date" &
+                            colnames (j) [2] == "England",
+                        logical (1)))
+res <- res [[i]]
+cases <- res [-1, which (names (res) == "Confirmed cases") [2]]
+cases <- as.integer (gsub (",", "", cases [1:(which (cases == "N/A") - 1)]))
+dates <- ymd (res$Date [-1] [seq (length (cases))])
+
+tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states
+tend <- tstart + window_span
+config <- make_config(list(mean_si = 6.5, std_mean_si = 2,
+                      min_mean_si = 1, max_mean_si = 8.4,
+                      std_si = 3.4, std_std_si = 1,
+                      min_std_si = 0.5, max_std_si = 4,
+                      t_start = tstart, t_end = tend))
+rval_uk <- estimate_R(cases, method = "parametric_si", config = config)
+rval_uk$dates <- dates
+R0_uk <- as.numeric (tail (rval_uk$R["Mean(R)"], 1))
+```
+
+
+Note that equivalent US values can not be compared because of inadequate statistics, as explained on the [wikipedia page](https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_in_the_United_States#Statistics).
+
+
+
+```{r all-rates}
+rval_de <- res_parametric_si
+dates <- sort (unique (c (rval_de$dates, rval_india$dates, rval_uk$dates)))
+res <- data.frame (date = dates,
+                   rmn = NA,
+                   rsd = NA,
+                   q05 = NA,
+                   q95 = NA)
+res_de <- res_uk <- res_india <- res
+
+index <- match (rval_de$dates [rval_de$R[, "t_end"]], res$date)
+res_de$rmn [index] <- rval_de$R[, "Mean(R)"]
+res_de$rsd [index] <- rval_de$R[, "Std(R)"]
+res_de$q05 [index] <- rval_de$R[, "Quantile.0.05(R)"]
+res_de$q95 [index] <- rval_de$R[, "Quantile.0.95(R)"]
+res_de$country <- "Germany"
+
+index <- match (rval_uk$dates [rval_uk$R[, "t_end"]], res$date)
+res_uk$rmn [index] <- rval_uk$R[, "Mean(R)"]
+res_uk$rsd [index] <- rval_uk$R[, "Std(R)"]
+res_uk$q05 [index] <- rval_uk$R[, "Quantile.0.05(R)"]
+res_uk$q95 [index] <- rval_uk$R[, "Quantile.0.95(R)"]
+res_uk$country <- "uk"
+
+index <- match (rval_india$dates [rval_india$R[, "t_end"]], res$date)
+res_india$rmn [index] <- rval_india$R[, "Mean(R)"]
+res_india$rsd [index] <- rval_india$R[, "Std(R)"]
+res_india$q05 [index] <- rval_india$R[, "Quantile.0.05(R)"]
+res_india$q95 [index] <- rval_india$R[, "Quantile.0.95(R)"]
+res_india$country <- "India"
+
+# manual conversion to long
+res <- rbind (res_de, res_uk, res_india)
+res <- res [which (apply (res [, 3:5], 1, function (i) !all (is.na (i)))), ]
+
+ggplot (res, aes (x = date, y = rmn, colour = country)) +
+    geom_smooth (aes (ymin = q05, ymax = q95), method = "loess",
+                 formula = "y ~ x", span = 0.5) +
+    scale_y_log10 (limits = c (1, 10)) +
+    ylab ("Instantaneous Reproductive Rate (R0)")
+```
+
 

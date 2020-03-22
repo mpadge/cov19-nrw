@@ -428,9 +428,9 @@ res <- rbind (res_de, res_uk, res_india, res_aus)
 res <- res [which (apply (res [, 3:5], 1, function (i) !all (is.na (i)))), ]
 res <- res [which (res$date > ymd ("2020-02-20")), ]
 
-ggplot (res, aes (x = date, y = rmn, colour = country)) +
-    geom_smooth (aes (ymin = q05, ymax = q95), method = "loess",
-                 formula = "y ~ x", span = 0.5) +
+ggplot (res, aes (x = date, y = rmn, colour = country, fill = country)) +
+    geom_line (size = 1) +
+    geom_ribbon (aes (ymin = q05, ymax = q95), alpha = 0.2, colour = NA) +
     scale_y_log10 (limits = c (1, 10)) +
     ylab ("Instantaneous Reproductive Rate (R0)")
 ```

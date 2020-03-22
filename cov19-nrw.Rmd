@@ -273,16 +273,17 @@ u <- "https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_in_India"
 res <- read_html (u) %>%
     html_table (fill = TRUE)
 i <- which (vapply (res, function (j) 
-                        colnames (j) [1] == "Date" &
+                        substring (colnames (j) [1], 1, 4) == "Date" &
                             colnames (j) [2] == "State/Union Territory",
                         logical (1)))
 res <- res [[i]]
 cases <- res [-1, which (names (res) == "Cases[a]") [2]]
 cases <- as.integer (cases [1:(which (cases == "") - 1)])
 dates <- res$Date [-1] [seq (length (cases))]
-index <- which (grepl ("^2020", dates))
+# Currently has format "Jan-30", so:
+index <- grep ("[0-9]", substring (dates, nchar (dates) - 1, nchar (dates)))
 cases <- cases [index]
-dates <- ymd (dates [index])
+dates <- ymd (paste ("2020-", dates [index]))
 
 tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states
 tend <- tstart + window_span

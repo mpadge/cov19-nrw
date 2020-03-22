@@ -16,8 +16,11 @@ knitr::opts_chunk$set(
 )
 ```
 
-This is all just a direct translation of the analyses of [Tim
-Churches](https://timchurches.github.io), primarily from [this blog
+This site presents some analyses of Covid19 in North Rhine-Westphalia, the most
+populous state in Germany, and for the first parts of the current pandemic, the
+state most severely affected. This is all directly adapted from the excellent
+analyses of [Tim Churches](https://timchurches.github.io), primarily from [this
+blog
 post](https://timchurches.github.io/blog/posts/2020-02-18-analysing-covid-19-2019-ncov-outbreak-data-with-r-part-1).
 See also [part 2 of that blog
 post](https://timchurches.github.io/blog/posts/2020-03-01-analysing-covid-19-2019-ncov-outbreak-data-with-r-part-2/),
@@ -173,7 +176,11 @@ message ("Basic reproductive rate = ", formatC (R0, format = "f", digits = 2))
 The preceding code gives an estimate for the reproductive rate of 
 `r formatC (R0, format = "f", digits = 2)`, compared, for example, with Tim's
 estimate of around 2.0 for the initial cases from Hubei Province, China, the
-origin of the current outbreak. 
+origin of the current outbreak. That is, however, a very simplified model that
+presumes a single, constant rate throughout the entire development of the
+virus. More sophisticated estimates are presented below, presuming rates to
+vary over time, as appropriate for example, in response to social distancing
+policies. But first, some predictions based on that very simplified model.
 
 ## prediction
 
@@ -436,8 +443,9 @@ ggplot (res, aes (x = date, y = rmn, colour = country, fill = country)) +
 ```
 
 And India start in the first week of March with a similar rate of reproduction,
-but has managed to decrease the rate much faster than either the UK or Germany.
-Germany currently has a lower rate of reproduction than the UK. Australia was
-doing really well, but is looking like it might be facing some serious problems
-soon.
+but has managed to decrease the rate much faster than either the UK or Germany,
+although that now looks like reversing. Germany currently has a lower rate of
+reproduction than the UK, with a strong downturn presumably causally related to
+the recently introduced social distancing measures. Australia was doing really
+well, but is looking like it might be facing some serious problems soon.
 

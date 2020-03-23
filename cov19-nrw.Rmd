@@ -379,8 +379,6 @@ R0_us <- as.numeric (tail (rval_us$R["Mean(R)"], 1))
 ```
 
 
-Note that equivalent US values can not be compared because of inadequate statistics, as explained on the [wikipedia page](https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_in_the_United_States#Statistics).
-
 ```{r all-case-counts}
 rval_de <- res_parametric_si
 dates <- sort (unique (c (rval_de$dates, rval_india$dates, rval_uk$dates,

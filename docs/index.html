@@ -852,7 +852,6 @@ rval_us &lt;- estimate_R(cases, method = &quot;parametric_si&quot;, config = con
 #&gt;             posterior CV.
 rval_us$dates &lt;- dates
 R0_us &lt;- as.numeric (tail (rval_us$R[&quot;Mean(R)&quot;], 1))</code></pre>
-<p>Note that equivalent US values can not be compared because of inadequate statistics, as explained on the <a href="https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_in_the_United_States#Statistics">wikipedia page</a>.</p>
 <pre class="r"><code>rval_de &lt;- res_parametric_si
 dates &lt;- sort (unique (c (rval_de$dates, rval_india$dates, rval_uk$dates,
                           rval_aus$dates, rval_us$dates)))

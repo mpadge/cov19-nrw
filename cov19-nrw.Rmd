@@ -64,21 +64,17 @@ u <- "https://en.wikipedia.org/wiki/2020_coronavirus_outbreak_in_Germany"
 res <- read_html (u) %>%
     html_table (fill = TRUE)
 i <- which (vapply (res, function (j) 
-                        colnames (j) [1] == "State" &
-                            colnames (j) [2] == "February",
+                        colnames (j) [1] == "Date" &
+                            substring (colnames (j) [2], 1, 5) == "Baden",
                         logical (1)))
 res <- res [[i]]
-state <- res$State [-1]
-dates <- ymd (paste0 ("2020-", colnames (res) [-1], res [1, -1]))
-res <- res [2:nrow (res), 2:ncol (res)]
-res <- apply (res, 2, function (i) {
+dates <- ymd (dmy (paste0 (res$Date, " 2020")))
+i <- grep ("^Germany", names (res)) [1] - 1
+res <- apply (res [, 2:i], 2, function (i) {
                   str_replace_all (i, "—", NA_character_) %>%
                       str_replace_all ("\\(.*\\)|\\[.*\\]", "") %>%
                       as.integer () })
-colnames (res) <- paste0 (dates)
-x <- cbind (state = state, as.data.frame (res))
-end_row <- grep ("Germany", x$state) - 1
-x <- x [1:end_row, ]
+x <- cbind (date = dates, as.data.frame (res))
 ```
 
 
@@ -87,8 +83,7 @@ Current trajectories for each state of Germany look like this:
 ```{r germany-plot, message = FALSE}
 xl <- pivot_longer (x, col = names (x) [-1]) %>%
     filter (!is.na (value))
-xl$name <- ymd (str_replace_all (xl$name, "^X", ""))
-xl <- rename (xl, date = name, cases = value)
+xl <- rename (xl, state = name, cases = value)
 ggplot (xl, aes (x = date, y = cases, colour = state)) +
     geom_line () +
     geom_point ()
@@ -113,9 +108,7 @@ this_state <- "North Rhine-Westphalia"
 sir_start_date <- min (xl$date)
 sir_latest_date <- max (xl$date)
 ndays <- length (unique (xl$date))
-Infected <- as.integer (x [x$state == this_state, 2:ncol (x)])
-# Heinsberg data only (values#9, 12 are interpolated)
-#Infected <- c (1, 2, 16, 37, 60, 68, 79, 84, 135, 195, 220, 250, 277)
+Infected <- as.integer (x [, names (x) == this_state])
 index <- min (which (Infected > 0)):length (Infected)
 dates <- sir_start_date + days ((1:ndays - 1) [index])
 Infected <- Infected [index]
@@ -123,7 +116,6 @@ Day <- seq_along (Infected)
 
 # now specify initial values for S, I and R
 N <- 17.9e6 # current wikipedia population of NRW
-#N <- 41946 # Heinsberg
 init <- c(S = N - Infected[1], I = Infected[1], R = 0)
 
 # define a function to calculate the residual sum of squares
@@ -165,6 +157,7 @@ fitted_cumulative_incidence$date <- dates
 main <- paste0 ("COVID-19 fitted vs observed cumulative incidence, ", this_state)
 fitted_cumulative_incidence %>%
     ggplot(aes(x = date)) + geom_line(aes(y = I), colour = "red") + 
+    geom_line(aes(y = observed), colour = "orange") + 
     geom_point(aes(y = observed), colour = "orange") + 
     labs(y = "Cumulative incidence", title = main,
          subtitle = "(red=fitted incidence from SIR model, orange=observed incidence)")
@@ -259,12 +252,12 @@ config <- make_config(list(mean_si = 6.5, std_mean_si = 2,
                       std_si = 3.4, std_std_si = 1,
                       min_std_si = 0.5, max_std_si = 4,
                       t_start = tstart, t_end = tend))
-rvals <- apply (x [, 2:ncol (x)], 1, function (i) {
+rvals <- apply (x [, 2:ncol (x)], 2, function (i) {
                     res <- estimate_R(i, method = "parametric_si",
                                       config = config)
                     as.numeric (tail (res$R["Mean(R)"], 1))
                                 })
-data.frame (state = x$state,
+data.frame (state = names (x) [-1],
             R = rvals,
             stringsAsFactors = FALSE) %>%
     arrange (R) %>%
@@ -442,10 +435,11 @@ ggplot (res, aes (x = date, y = rmn, colour = country, fill = country)) +
     ylab ("Instantaneous Reproductive Rate (R0)")
 ```
 
-And India start in the first week of March with a similar rate of reproduction,
-but has managed to decrease the rate much faster than either the UK or Germany,
-although that now looks like reversing. Germany currently has a lower rate of
-reproduction than the UK, with a strong downturn presumably causally related to
-the recently introduced social distancing measures. Australia was doing really
-well, but is looking like it might be facing some serious problems soon.
+And India start in the first week of March with a similar rate of reproduction
+to Germany, but has managed to decrease the rate much faster than either the UK
+or Germany, although that now looks like reversing. Germany currently has
+a lower rate of reproduction than the UK, with a strong downturn presumably
+causally related to the recently introduced social distancing measures -- or
+perhaps greater compliance than in the UK. Australia was doing really well, but
+is looking like it might be facing some serious problems soon.
 

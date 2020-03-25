@@ -402,6 +402,7 @@ res <- rbind (cbind (res_de, "country" = "Germany"),
               cbind (res_india, "country" = "India"),
               cbind (res_aus, "country" = "Australia"),
               cbind (res_us, "country" = "United States"))
+res$country <- paste0 (res$country)
 res <- res [which (res$date > ymd ("2020-02-20")), ]
 ggplot (res, aes (x = date, y = cases, colour = country)) +
     geom_line () +
@@ -466,7 +467,7 @@ res <- rbind (res_de, res_uk, res_india, res_aus, res_us)
 res <- res [which (apply (res [, 2:5], 1, function (i) !all (is.na (i)))), ]
 res <- res [which (res$date > ymd ("2020-02-20")), ]
 
-ggplot (res, aes (x = date, y = rmn, colour = country, fill = country)) +
+ggplot (res, aes (x = date, y = rmn, colour = country)) +
     geom_line (size = 1) +
     geom_ribbon (aes (ymin = q05, ymax = q95), alpha = 0.2, colour = NA) +
     scale_y_log10 (limits = c (1, 10)) +

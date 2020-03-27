@@ -309,7 +309,7 @@ i <- which (vapply (res, function (j)
 res <- res [[i]]
 cases <- res [-1, which (names (res) == "Confirmed cases") [2]]
 cases <- as.integer (gsub (",", "", cases [1:(which (cases == "N/A") - 1)]))
-dates <- ymd (res$Date [-1] [seq (length (cases))])
+dates <- ymd (dmy (paste0 (res$Date [-1] [seq (length (cases))], "2020")))
 
 tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states
 tend <- tstart + window_span

@@ -65,16 +65,20 @@ res <- read_html (u) %>%
     html_table (fill = TRUE)
 i <- which (vapply (res, function (j) 
                         colnames (j) [1] == "Date" &
-                            substring (colnames (j) [2], 1, 5) == "Baden",
+                            substring (colnames (j) [2], 1, 6) == "States",
                         logical (1)))
 res <- res [[i]]
+coln <- grep ("^Germany", res [1, ]) - 1
+states <- as.character (res [1, 2:coln])
+res <- res [grep ("[1-9].", substring (res$Date, 1,2)), ]
 dates <- ymd (dmy (paste0 (res$Date, " 2020")))
-i <- grep ("^Germany", names (res)) [1] - 1
-res <- apply (res [, 2:i], 2, function (i) {
+res <- apply (res [, 2:coln], 2, function (i) {
                   str_replace_all (i, "—", NA_character_) %>%
                       str_replace_all ("\\(.*\\)|\\[.*\\]", "") %>%
                       as.integer () })
-x <- cbind (date = dates, as.data.frame (res))
+res <- data.frame (res)
+names (res) <- states
+x <- data.frame (date = dates, res)
 ```
 
 
@@ -104,7 +108,7 @@ SIR <- function(time, state, parameters) {
 }
 
 # put the daily cumulative incidence numbers into a vector called Infected
-this_state <- "North Rhine-Westphalia"
+this_state <- "North.Rhine.Westphalia"
 sir_start_date <- min (xl$date)
 sir_latest_date <- max (xl$date)
 ndays <- length (unique (xl$date))
@@ -323,7 +327,7 @@ rval_uk$dates <- dates
 R0_uk <- as.numeric (tail (rval_uk$R["Mean(R)"], 1))
 ```
 
-```{r aus-rate}
+```{r aus-rate, eval = FALSE}
 # Australia
 u <- "https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_in_Australia"
 res <- read_html (u) %>%
@@ -381,8 +385,10 @@ R0_us <- as.numeric (tail (rval_us$R["Mean(R)"], 1))
 
 ```{r all-case-counts}
 rval_de <- res_parametric_si
+#dates <- sort (unique (c (rval_de$dates, rval_india$dates, rval_uk$dates,
+#                          rval_aus$dates, rval_us$dates)))
 dates <- sort (unique (c (rval_de$dates, rval_india$dates, rval_uk$dates,
-                          rval_aus$dates, rval_us$dates)))
+                          rval_us$dates)))
 res <- data.frame (date = dates,
                    cases = NA)
 res_de <- res_uk <- res_india <- res_aus <- res_us <- res
@@ -392,15 +398,15 @@ index <- match (rval_uk$dates, res$date)
 res_uk$cases [index] <- rval_uk$I
 index <- match (rval_india$dates, res$date)
 res_india$cases [index] <- rval_india$I
-index <- match (rval_aus$dates, res$date)
-res_aus$cases [index] <- rval_aus$I
+#index <- match (rval_aus$dates, res$date)
+#res_aus$cases [index] <- rval_aus$I
 index <- match (rval_us$dates, res$date)
 res_us$cases [index] <- rval_us$I
 
 res <- rbind (cbind (res_de, "country" = "Germany"),
               cbind (res_uk, "country" = "UK"),
               cbind (res_india, "country" = "India"),
-              cbind (res_aus, "country" = "Australia"),
+              #cbind (res_aus, "country" = "Australia"),
               cbind (res_us, "country" = "United States"))
 res$country <- paste0 (res$country)
 res <- res [which (res$date > ymd ("2020-02-20")), ]
@@ -418,8 +424,10 @@ numbers derived from these data are shown in the following graph.
 
 
 ```{r all-rates}
+#dates <- sort (unique (c (rval_de$dates, rval_india$dates, rval_uk$dates,
+#                          rval_aus$dates, rval_us$dates)))
 dates <- sort (unique (c (rval_de$dates, rval_india$dates, rval_uk$dates,
-                          rval_aus$dates, rval_us$dates)))
+                          rval_us$dates)))
 res <- data.frame (date = dates,
                    rmn = NA,
                    rsd = NA,
@@ -448,12 +456,12 @@ res_india$q05 [index] <- rval_india$R[, "Quantile.0.05(R)"]
 res_india$q95 [index] <- rval_india$R[, "Quantile.0.95(R)"]
 res_india$country <- "India"
 
-index <- match (rval_aus$dates [rval_aus$R[, "t_end"]], res$date)
-res_aus$rmn [index] <- rval_aus$R[, "Mean(R)"]
-res_aus$rsd [index] <- rval_aus$R[, "Std(R)"]
-res_aus$q05 [index] <- rval_aus$R[, "Quantile.0.05(R)"]
-res_aus$q95 [index] <- rval_aus$R[, "Quantile.0.95(R)"]
-res_aus$country <- "Australia"
+#index <- match (rval_aus$dates [rval_aus$R[, "t_end"]], res$date)
+#res_aus$rmn [index] <- rval_aus$R[, "Mean(R)"]
+#res_aus$rsd [index] <- rval_aus$R[, "Std(R)"]
+#res_aus$q05 [index] <- rval_aus$R[, "Quantile.0.05(R)"]
+#res_aus$q95 [index] <- rval_aus$R[, "Quantile.0.95(R)"]
+#res_aus$country <- "Australia"
 
 index <- match (rval_us$dates [rval_us$R[, "t_end"]], res$date)
 res_us$rmn [index] <- rval_us$R[, "Mean(R)"]
@@ -463,7 +471,8 @@ res_us$q95 [index] <- rval_us$R[, "Quantile.0.95(R)"]
 res_us$country <- "United States"
 
 # manual conversion to long
-res <- rbind (res_de, res_uk, res_india, res_aus, res_us)
+#res <- rbind (res_de, res_uk, res_india, res_aus, res_us)
+res <- rbind (res_de, res_uk, res_india, res_us)
 res <- res [which (apply (res [, 2:5], 1, function (i) !all (is.na (i)))), ]
 res <- res [which (res$date > ymd ("2020-02-20")), ]
 
@@ -474,11 +483,4 @@ ggplot (res, aes (x = date, y = rmn, colour = country, fill = country)) +
     ylab ("Instantaneous Reproductive Rate (R0)")
 ```
 
-And India start in the first week of March with a similar rate of reproduction
-to Germany, but has managed to decrease the rate much faster than either the UK
-or Germany, although that now looks like reversing. Germany currently has
-a lower rate of reproduction than the UK, with a strong downturn presumably
-causally related to the recently introduced social distancing measures -- or
-perhaps greater compliance than in the UK. Australia was doing really well, but
-is looking like it might be facing some serious problems soon.
 

@@ -328,7 +328,7 @@ R0_uk <- as.numeric (tail (rval_uk$R["Mean(R)"], 1))
 ```
 
 ```{r aus-rate, eval = FALSE}
-# Australia
+# Australia - temporarily fails to parse, so numbers manually added below
 u <- "https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_in_Australia"
 res <- read_html (u) %>%
     html_table (fill = TRUE)
@@ -343,6 +343,73 @@ res <- apply (res [, -1], 2, function (i) {
                       as.integer () })
 cases <- res [, which (colnames (res) == "Confirmed")]
 
+tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states
+tend <- tstart + window_span
+config <- make_config(list(mean_si = 6.5, std_mean_si = 2,
+                      min_mean_si = 1, max_mean_si = 8.4,
+                      std_si = 3.4, std_std_si = 1,
+                      min_std_si = 0.5, max_std_si = 4,
+                      t_start = tstart, t_end = tend))
+rval_aus <- estimate_R(cases, method = "parametric_si", config = config)
+rval_aus$dates <- dates
+R0_aus <- as.numeric (tail (rval_aus$R["Mean(R)"], 1))
+```
+
+```{r}
+x <- rbind (c ("25 January 2020", 4),
+            c ("27 January 2020", 5),
+            c ("29 January 2020", 7),
+            c ("30 January 2020", 9),
+            c ("1 February 2020", 10),
+            c ("2 February 2020", 12),
+            c ("8 February 2020", 15),
+            c ("12 February 2020", 15),
+            c ("13 February 2020", 15),
+            c ("16 February 2020", 15),
+            c ("17 February 2020", 15),
+            c ("18 February 2020", 15),
+            c ("19 February 2020", 15),
+            c ("20 February 2020", 17),
+            c ("21 February 2020", 21),
+            c ("22 February 2020", 22),
+            c ("23 February 2020", 22),
+            c ("24 February 2020", 22),
+            c ("25 February 2020", 23),
+            c ("26 February 2020", 23),
+            c ("27 February 2020", 23),
+            c ("28 February 2020", 25),
+            c ("29 February 2020", 26),
+            c ("1 March 2020", 29),
+            c ("2 March 2020", 33),
+            c ("3 March 2020", 41),
+            c ("4 March 2020", 52),
+            c ("5 March 2020", 60),
+            c ("6 March 2020", 63),
+            c ("7 March 2020", 73),
+            c ("8 March 2020", 80),
+            c ("9 March 2020", 92),
+            c ("10 March 2020", 112),
+            c ("11 March 2020", 127),
+            c ("12 March 2020", 156),
+            c ("13 March 2020", 198),
+            c ("14 March 2020", 248),
+            c ("15 March 2020", 298),
+            c ("16 March 2020", 376),
+            c ("17 March 2020", 453),
+            c ("18 March 2020", 566),
+            c ("19 March 2020", 708),
+            c ("20 March 2020", 875),
+            c ("21 March 2020", 1071),
+            c ("22 March 2020", 1352),
+            c ("23 March 2020", 1716),
+            c ("24 March 2020", 2146),
+            c ("25 March 2020", 2431),
+            c ("26 March 2020", 2805),
+            c ("27 March 2020", 3179),
+            c ("28 March 2020", 3639),
+            c ("29 March 2020", 3968))
+dates <- ymd (dmy (x [, 1]))
+cases <- as.integer (x [, 2])
 tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states
 tend <- tstart + window_span
 config <- make_config(list(mean_si = 6.5, std_mean_si = 2,
@@ -385,10 +452,8 @@ R0_us <- as.numeric (tail (rval_us$R["Mean(R)"], 1))
 
 ```{r all-case-counts}
 rval_de <- res_parametric_si
-#dates <- sort (unique (c (rval_de$dates, rval_india$dates, rval_uk$dates,
-#                          rval_aus$dates, rval_us$dates)))
 dates <- sort (unique (c (rval_de$dates, rval_india$dates, rval_uk$dates,
-                          rval_us$dates)))
+                          rval_aus$dates, rval_us$dates)))
 res <- data.frame (date = dates,
                    cases = NA)
 res_de <- res_uk <- res_india <- res_aus <- res_us <- res
@@ -398,15 +463,15 @@ index <- match (rval_uk$dates, res$date)
 res_uk$cases [index] <- rval_uk$I
 index <- match (rval_india$dates, res$date)
 res_india$cases [index] <- rval_india$I
-#index <- match (rval_aus$dates, res$date)
-#res_aus$cases [index] <- rval_aus$I
+index <- match (rval_aus$dates, res$date)
+res_aus$cases [index] <- rval_aus$I
 index <- match (rval_us$dates, res$date)
 res_us$cases [index] <- rval_us$I
 
 res <- rbind (cbind (res_de, "country" = "Germany"),
               cbind (res_uk, "country" = "UK"),
               cbind (res_india, "country" = "India"),
-              #cbind (res_aus, "country" = "Australia"),
+              cbind (res_aus, "country" = "Australia"),
               cbind (res_us, "country" = "United States"))
 res$country <- paste0 (res$country)
 res <- res [which (res$date > ymd ("2020-02-20")), ]
@@ -424,10 +489,8 @@ numbers derived from these data are shown in the following graph.
 
 
 ```{r all-rates}
-#dates <- sort (unique (c (rval_de$dates, rval_india$dates, rval_uk$dates,
-#                          rval_aus$dates, rval_us$dates)))
 dates <- sort (unique (c (rval_de$dates, rval_india$dates, rval_uk$dates,
-                          rval_us$dates)))
+                          rval_aus$dates, rval_us$dates)))
 res <- data.frame (date = dates,
                    rmn = NA,
                    rsd = NA,
@@ -456,12 +519,12 @@ res_india$q05 [index] <- rval_india$R[, "Quantile.0.05(R)"]
 res_india$q95 [index] <- rval_india$R[, "Quantile.0.95(R)"]
 res_india$country <- "India"
 
-#index <- match (rval_aus$dates [rval_aus$R[, "t_end"]], res$date)
-#res_aus$rmn [index] <- rval_aus$R[, "Mean(R)"]
-#res_aus$rsd [index] <- rval_aus$R[, "Std(R)"]
-#res_aus$q05 [index] <- rval_aus$R[, "Quantile.0.05(R)"]
-#res_aus$q95 [index] <- rval_aus$R[, "Quantile.0.95(R)"]
-#res_aus$country <- "Australia"
+index <- match (rval_aus$dates [rval_aus$R[, "t_end"]], res$date)
+res_aus$rmn [index] <- rval_aus$R[, "Mean(R)"]
+res_aus$rsd [index] <- rval_aus$R[, "Std(R)"]
+res_aus$q05 [index] <- rval_aus$R[, "Quantile.0.05(R)"]
+res_aus$q95 [index] <- rval_aus$R[, "Quantile.0.95(R)"]
+res_aus$country <- "Australia"
 
 index <- match (rval_us$dates [rval_us$R[, "t_end"]], res$date)
 res_us$rmn [index] <- rval_us$R[, "Mean(R)"]
@@ -471,8 +534,7 @@ res_us$q95 [index] <- rval_us$R[, "Quantile.0.95(R)"]
 res_us$country <- "United States"
 
 # manual conversion to long
-#res <- rbind (res_de, res_uk, res_india, res_aus, res_us)
-res <- rbind (res_de, res_uk, res_india, res_us)
+res <- rbind (res_de, res_uk, res_india, res_aus, res_us)
 res <- res [which (apply (res [, 2:5], 1, function (i) !all (is.na (i)))), ]
 res <- res [which (res$date > ymd ("2020-02-20")), ]
 

@@ -277,17 +277,14 @@ u <- "https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_in_India"
 res <- read_html (u) %>%
     html_table (fill = TRUE)
 i <- which (vapply (res, function (j) 
-                        substring (colnames (j) [1], 1, 4) == "Date" &
-                            colnames (j) [2] == "State/Union Territory",
+                    grepl ("COVID-19 cases in India", names (j) [1]),
                         logical (1)))
 res <- res [[i]]
-cases <- res [-1, which (names (res) == "Cases[a]") [2]]
-cases <- as.integer (cases [1:(which (cases == "") - 1)])
-dates <- res$Date [-1] [seq (length (cases))]
-# Currently has format "Jan-30", so:
-index <- grep ("[0-9]", substring (dates, nchar (dates) - 1, nchar (dates)))
-cases <- cases [index]
-dates <- ymd (paste ("2020-", dates [index]))
+case_col <- which (res [1, ] == "# of cases") [1]
+index <- grep ("[1-9].", res [, 1])
+dates <- ymd (res [index, 1])
+cases <- as.integer (gsub ("\\(.*\\)|,", "", res [index, case_col]))
+cases [6] <- 28 # currently fails to parse for some reason
 
 tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states
 tend <- tstart + window_span
@@ -407,7 +404,8 @@ x <- rbind (c ("25 January 2020", 4),
             c ("26 March 2020", 2805),
             c ("27 March 2020", 3179),
             c ("28 March 2020", 3639),
-            c ("29 March 2020", 3968))
+            c ("29 March 2020", 3968),
+            c ("30 March 2020", 3991))
 dates <- ymd (dmy (x [, 1]))
 cases <- as.integer (x [, 2])
 tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states

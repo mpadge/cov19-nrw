@@ -352,7 +352,7 @@ rval_aus$dates <- dates
 R0_aus <- as.numeric (tail (rval_aus$R["Mean(R)"], 1))
 ```
 
-```{r}
+```{r aus-rate-explicit}
 x <- rbind (c ("25 January 2020", 4),
             c ("27 January 2020", 5),
             c ("29 January 2020", 7),
@@ -408,7 +408,8 @@ x <- rbind (c ("25 January 2020", 4),
             c ("30 March 2020", 4250),
             c ("31 March 2020", 4561),
             c ("1 April 2020", 4864),
-            c ("2 April 2020", 5136))
+            c ("2 April 2020", 5136),
+            c ("3 April 2020", 5358))
 dates <- ymd (dmy (x [, 1]))
 cases <- as.integer (x [, 2])
 tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states

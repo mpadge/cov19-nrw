@@ -558,9 +558,10 @@ ggplot (res, aes (x = date, y = rmn, colour = country, fill = country)) +
 Current reproductive rates for these countries (sorted in increasing order) are:
 
 ```{r}
-res %>% group_by (country) %>%
+resout <- res %>% group_by (country) %>%
     summarise (rmn = tail (rmn, 1),
                rsd = tail (rsd, 1)) %>%
     arrange (by = rmn)
+knitr::kable (resout, digits = c (NA, 2, 2))
 ```
 

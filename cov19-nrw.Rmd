@@ -309,8 +309,11 @@ i <- which (vapply (res, function (j)
                         logical (1)))
 res <- res [[i]]
 cases <- res [-1, which (names (res) == "Confirmed cases") [2]]
-cases <- as.integer (gsub (",", "", cases [1:(which (cases == "N/A") - 1)]))
-dates <- ymd (dmy (paste0 (res$Date [-1] [seq (length (cases))], "2020")))
+cases <- as.integer (gsub (",", "", cases [1:(which (cases == "Total") - 1)]))
+dates <- res$Date [-1] [seq (length (cases))]
+index <- grep ("^[1-9].", dates)
+dates <- ymd (dmy (paste0 (dates [index], "2020")))
+cases <- cases [index]
 
 tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states
 tend <- tstart + window_span
@@ -412,7 +415,8 @@ x <- rbind (c ("25 January 2020", 4),
             c ("3 April 2020", 5358),
             c ("4 April 2020", 5552),
             c ("5 April 2020", 5689),
-            c ("6 April 2020", 5800))
+            c ("6 April 2020", 5800),
+            c ("7 April 2020", 5919))
 dates <- ymd (dmy (x [, 1]))
 cases <- as.integer (x [, 2])
 tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states

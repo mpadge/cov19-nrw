@@ -249,7 +249,7 @@ and sorts the results by increasing reproductive rate.
 ```{r chnages-in-R2}
 x [is.na (x)] <- 0
 window_span <- 2
-tstart <- 2:(ncol (x) - window_span - 1) # -1 for 1st column of states
+tstart <- 2:(nrow (x) - window_span - 1) # -1 for 1st column of states
 tend <- tstart + window_span
 config <- make_config(list(mean_si = 6.5, std_mean_si = 2,
                       min_mean_si = 1, max_mean_si = 8.4,

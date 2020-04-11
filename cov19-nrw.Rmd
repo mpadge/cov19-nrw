@@ -309,6 +309,7 @@ i <- which (vapply (res, function (j)
                         logical (1)))
 res <- res [[i]]
 cases <- res [-1, which (names (res) == "Confirmed cases") [2]]
+cases <- gsub ("d$", "", cases) # one value has a "d" on the end
 cases <- as.integer (gsub (",", "", cases [1:(which (cases == "Total") - 1)]))
 dates <- res$Date [-1] [seq (length (cases))]
 index <- grep ("^[1-9].", dates)
@@ -419,7 +420,8 @@ x <- rbind (c ("25 January 2020", 4),
             c ("7 April 2020", 5919),
             c ("8 April 2020", 6024),
             c ("9 April 2020", 6109),
-            c ("10 April 2020", 6215))
+            c ("10 April 2020", 6215),
+            c ("11 April 2020", 6303))
 dates <- ymd (dmy (x [, 1]))
 cases <- as.integer (x [, 2])
 tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states

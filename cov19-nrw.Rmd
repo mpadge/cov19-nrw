@@ -220,10 +220,8 @@ following code.
 
 ```{r changes-in-R}
 confirmed_cases <- Infected
-config <- make_config(list(mean_si = 6.5, std_mean_si = 2,
-                      min_mean_si = 1, max_mean_si = 8.4,
-                      std_si = 3.4, std_std_si = 1,
-                      min_std_si = 0.5, max_std_si = 4))
+config <- make_config(list(mean_si = 4.7, std_mean_si = 2.9,
+                      std_si = 3.4, std_std_si = 1))
 res_parametric_si <- estimate_R(confirmed_cases, method = "parametric_si",
                                 config = config)
 res_parametric_si$dates <- dates
@@ -251,10 +249,8 @@ x [is.na (x)] <- 0
 window_span <- 2
 tstart <- 2:(nrow (x) - window_span - 1) # -1 for 1st column of states
 tend <- tstart + window_span
-config <- make_config(list(mean_si = 6.5, std_mean_si = 2,
-                      min_mean_si = 1, max_mean_si = 8.4,
+config <- make_config(list(mean_si = 4.7, std_mean_si = 2.9,
                       std_si = 3.4, std_std_si = 1,
-                      min_std_si = 0.5, max_std_si = 4,
                       t_start = tstart, t_end = tend))
 rvals <- apply (x [, 2:ncol (x)], 2, function (i) {
                     res <- estimate_R(i, method = "parametric_si",
@@ -288,10 +284,8 @@ cases [6] <- 28 # currently fails to parse for some reason
 
 tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states
 tend <- tstart + window_span
-config <- make_config(list(mean_si = 6.5, std_mean_si = 2,
-                      min_mean_si = 1, max_mean_si = 8.4,
+config <- make_config(list(mean_si = 4.7, std_mean_si = 2.9,
                       std_si = 3.4, std_std_si = 1,
-                      min_std_si = 0.5, max_std_si = 4,
                       t_start = tstart, t_end = tend))
 rval_india <- estimate_R(cases, method = "parametric_si", config = config)
 rval_india$dates <- dates
@@ -318,10 +312,8 @@ cases <- cases [index]
 
 tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states
 tend <- tstart + window_span
-config <- make_config(list(mean_si = 6.5, std_mean_si = 2,
-                      min_mean_si = 1, max_mean_si = 8.4,
+config <- make_config(list(mean_si = 4.7, std_mean_si = 2.9,
                       std_si = 3.4, std_std_si = 1,
-                      min_std_si = 0.5, max_std_si = 4,
                       t_start = tstart, t_end = tend))
 rval_uk <- estimate_R(cases, method = "parametric_si", config = config)
 rval_uk$dates <- dates
@@ -346,10 +338,8 @@ cases <- res [, which (colnames (res) == "Confirmed")]
 
 tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states
 tend <- tstart + window_span
-config <- make_config(list(mean_si = 6.5, std_mean_si = 2,
-                      min_mean_si = 1, max_mean_si = 8.4,
+config <- make_config(list(mean_si = 4.7, std_mean_si = 2.9,
                       std_si = 3.4, std_std_si = 1,
-                      min_std_si = 0.5, max_std_si = 4,
                       t_start = tstart, t_end = tend))
 rval_aus <- estimate_R(cases, method = "parametric_si", config = config)
 rval_aus$dates <- dates
@@ -429,10 +419,8 @@ dates <- ymd (dmy (x [, 1]))
 cases <- as.integer (x [, 2])
 tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states
 tend <- tstart + window_span
-config <- make_config(list(mean_si = 6.5, std_mean_si = 2,
-                      min_mean_si = 1, max_mean_si = 8.4,
+config <- make_config(list(mean_si = 4.7, std_mean_si = 2.9,
                       std_si = 3.4, std_std_si = 1,
-                      min_std_si = 0.5, max_std_si = 4,
                       t_start = tstart, t_end = tend))
 rval_aus <- estimate_R(cases, method = "parametric_si", config = config)
 rval_aus$dates <- dates
@@ -456,10 +444,8 @@ cases <- as.integer (str_replace_all (res [, 4], "\\(.*\\)|\\[.*\\]|,", ""))
 
 tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states
 tend <- tstart + window_span
-config <- make_config(list(mean_si = 6.5, std_mean_si = 2,
-                      min_mean_si = 1, max_mean_si = 8.4,
+config <- make_config(list(mean_si = 4.7, std_mean_si = 2.9,
                       std_si = 3.4, std_std_si = 1,
-                      min_std_si = 0.5, max_std_si = 4,
                       t_start = tstart, t_end = tend))
 rval_us <- estimate_R(cases, method = "parametric_si", config = config)
 rval_us$dates <- dates

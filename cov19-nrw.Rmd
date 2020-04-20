@@ -417,7 +417,10 @@ x <- rbind (c ("25 January 2020", 4),
             c ("14 April 2020", 6400),
             c ("15 April 2020", 6447),
             c ("16 April 2020", 6468),
-            c ("17 April 2020", 6523))
+            c ("17 April 2020", 6523),
+            c ("18 April 2020", 6565),
+            c ("19 April 2020", 6606),
+            c ("20 April 2020", 6619))
 dates <- ymd (dmy (x [, 1]))
 cases <- as.integer (x [, 2])
 tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states

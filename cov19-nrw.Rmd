@@ -420,7 +420,17 @@ x <- rbind (c ("25 January 2020", 4),
             c ("17 April 2020", 6523),
             c ("18 April 2020", 6565),
             c ("19 April 2020", 6606),
-            c ("20 April 2020", 6619))
+            c ("20 April 2020", 6619),
+            c ("21 April 2020", 6645),
+            c ("22 April 2020", 6649),
+            c ("23 April 2020", 6661),
+            c ("24 April 2020", 6675),
+            c ("25 April 2020", 6695),
+            c ("26 April 2020", 6711),
+            c ("27 April 2020", 6720),
+            c ("28 April 2020", 6731),
+            c ("29 April 2020", 6746),
+            c ("30 April 2020", 6753))
 dates <- ymd (dmy (x [, 1]))
 cases <- as.integer (x [, 2])
 tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states
@@ -435,18 +445,12 @@ R0_aus <- as.numeric (tail (rval_aus$R["Mean(R)"], 1))
 
 ```{r us-rate}
 # USA
-u <- "https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_in_the_United_States"
-res <- read_html (u) %>%
-    html_table (fill = TRUE)
-i <- which (vapply (res, function (j) 
-                    grepl ("COVID-19 cases in United States", names (j) [1]),
-                    logical (1)))
-res <- res [[i]]
-dates <- res [, 1]
-index <- which (substring (dates, 1, 4) == "2020")
-dates <- ymd (res [index, 1])
-res <- res [index, ]
-cases <- as.integer (str_replace_all (res [, 4], "\\(.*\\)|\\[.*\\]|,", ""))
+u <- "https://covidtracking.com/api/v1/us/daily.csv"
+download.file (u, destfile = "us.csv")
+x <- read.csv ("us.csv")
+dates <- rev (ymd (x$date))
+cases <- rev (x$total)
+junk <- file.remove ("us.csv")
 
 tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states
 tend <- tstart + window_span

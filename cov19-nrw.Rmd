@@ -5,6 +5,7 @@ output:
       code_folding: hide
 ---
 
+
 ```{r opts, echo = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -310,6 +311,9 @@ index <- grep ("^[1-9].", dates)
 dates <- ymd (dmy (paste0 (dates [index], "2020")))
 cases <- cases [index]
 
+dates <- dates [which (!is.na (cases))]
+cases <- cases [which (!is.na (cases))]
+
 tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states
 tend <- tstart + window_span
 config <- make_config(list(mean_si = 4.7, std_mean_si = 2.9,
@@ -322,7 +326,7 @@ R0_uk <- as.numeric (tail (rval_uk$R["Mean(R)"], 1))
 
 ```{r aus-rate, eval = FALSE}
 # Australia - temporarily fails to parse, so numbers manually added below
-u <- "https://en.wikipedia.org/wiki/2020_coronavirus_pandemic_in_Australia"
+u <- "https://en.wikipedia.org/wiki/Template:2019%E2%80%9320_coronavirus_pandemic_data/Australia_medical_cases"
 res <- read_html (u) %>%
     html_table (fill = TRUE)
 i <- which (vapply (res, function (j) 
@@ -430,7 +434,10 @@ x <- rbind (c ("25 January 2020", 4),
             c ("27 April 2020", 6720),
             c ("28 April 2020", 6731),
             c ("29 April 2020", 6746),
-            c ("30 April 2020", 6753))
+            c ("30 April 2020", 6753),
+            c ("1 May 2020", 6757),
+            c ("1 May 2020", 6783),
+            c ("1 May 2020", 6801))
 dates <- ymd (dmy (x [, 1]))
 cases <- as.integer (x [, 2])
 tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states

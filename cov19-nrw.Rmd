@@ -185,7 +185,7 @@ policies. But first, some predictions based on that very simplified model.
 Tim's code to use the model derived above to generate predicted values follows:
 
 ```{r prediction}
-t <- 1:70
+t <- 1:150
 # get the fitted values from our SIR model
 fitted_cumulative_incidence <- data.frame(deSolve::ode(y = init, times = t, 
                                                        func = SIR, parms = Opt_par))
@@ -438,7 +438,9 @@ x <- rbind (c ("25 January 2020", 4),
             c ("1 May 2020", 6757),
             c ("2 May 2020", 6783),
             c ("3 May 2020", 6801),
-            c ("4 May 2020", 6825))
+            c ("4 May 2020", 6825),
+            c ("5 May 2020", 6849),
+            c ("6 May 2020", 6875))
 dates <- ymd (dmy (x [, 1]))
 cases <- as.integer (x [, 2])
 tstart <- 2:(length (cases) - window_span - 1) # -1 for 1st column of states
